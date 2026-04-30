@@ -1,0 +1,2 @@
+# Extensive de-novo TE Annotator (EDTA) v2.2.2
+perl EDTA.pl --genome all.haps.rename.shortid.fasta --species others --step all --cds medsa.RegenSY27x.gnm1.ann1.gene_models_main.shortid.cds.fasta  --sensitive 1 --anno 1  --evaluate 1  --threads 80 --rmlib all.haps.rename.shortid.fasta.RM2.fa --exclude medsa.RegenSY27x.gnm1.ann1.gene_models_main.shortid.bed --force 1 --curatedlib TE_lib/TE_lib_legumes.fa
