@@ -25,7 +25,7 @@ python cafe5_tree_from_report_boxes.py
   --x_scale 1
   --branch_lw 2.5
 
-# Optional extract significantly expanded and contracted families using Orthifinder and CAFE5 results
+# Optional - extract significantly expanded and contracted families using Orthifinder and CAFE5 results
 python  extract_cafe5_families_to_bed_v2.py \
   --change Base_change.tab \
   --node 6 \
