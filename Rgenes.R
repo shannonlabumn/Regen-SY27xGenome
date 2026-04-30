@@ -4,7 +4,8 @@ setwd("~/Desktop/Harpreet/")
 ## ==========================================================
 
 ## ---------- CONFIG ----------
-chrom_sizes_path <- "chrom.sizes"
+chrom_sizes_path <- "chrom.sizes" # this file is available in main branch
+# all gff files are generated using FindPlantNLRs pipeline
 gff_files <- c(
   "RSY_shortid_braker_aa_CNB.gff3",
   "RSY_shortid_braker_aa_CNL.gff3",
