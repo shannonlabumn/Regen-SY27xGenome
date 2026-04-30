@@ -11,4 +11,27 @@ orthofinder  -f Ortho/primary_transcripts/
 
 cafe5 -i Orthogroups.GeneCount.filtered.tsv -t Species_Tree/SpeciesTree_ultrametric.nwk -c 32 -k 0.01
 
-python cafe5_tree_from_report_boxes.py --report Base_report.cafe   --count Base_count.tab   --clade Base_clade_results.txt   --change Base_change.tab   -o cafe5_expansion_contraction.png --fontsize 13   --paren_mode families  --label_xshift_frac 0.09 --fig_height 18 --y_scale 2.5 --x_scale 1 --branch_lw 2.5
+python cafe5_tree_from_report_boxes.py 
+  --report Base_report.cafe  
+  --count Base_count.tab  
+  --clade Base_clade_results.txt   
+  --change Base_change.tab   
+  -o cafe5_expansion_contraction.png 
+  --fontsize 13   
+  --paren_mode families  
+  --label_xshift_frac 0.09 
+  --fig_height 18 
+  --y_scale 2.5 
+  --x_scale 1
+  --branch_lw 2.5
+
+# Optional extract significantly expanded and contracted families using Orthifinder and CAFE5 results
+python  extract_cafe5_families_to_bed_v2.py \
+  --change Base_change.tab \
+  --node 6 \
+  --family_results Base_family_results.txt \
+  --orthogroups Orthogroups.tsv \
+  --species Medicago_sativa \
+  --gff genome.gff3 \
+  --window 5000 \
+  --out_prefix node6
