@@ -1,0 +1,11 @@
+# We used OrthoFinder v3.1.0 (Emms and Kelly 2019) to identify gene orthogroups among the alfalfa genomes; 
+# Regen-SY27x, Zm1 (Shen et al. 2020), Zm4 (Long et al. 2022), XJDY (Chen et al. 2020); and 
+# five other legume species, M. ruthenica (Wang et al. 2021), M. truncatula v5.0 (Pecrix et al. 2018), Pisum sativum v1a (Kreplak et al. 2019), Cicer arietinum cv. CDC Frontier v1.0 (Varshney et al. 2013), and Trifolium pratense (De Vega et al. 2015) 
+# using the annotated primary protein sequences placec in primary_transcripts folder 
+
+orthofinder  -f Ortho/primary_transcripts/
+
+# The orthologous gene families and phylogenetic tree topology inferred from OrthoFinder v3.1.0 (Emms and Kelly 2019) were input to CAFE5 v5.1.0 (Mendes et al. 2021)
+# to identify significant expansion or contraction in each gene family (P < 0.01). 
+
+cafe5 -i Orthogroups.GeneCount.filtered.tsv -t Species_Tree/SpeciesTree_ultrametric.nwk -c 32 -k 0.01
