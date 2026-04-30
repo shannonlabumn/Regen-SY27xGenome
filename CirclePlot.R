@@ -60,7 +60,7 @@ chr_len <- kar[, .(length = max(End, na.rm=TRUE)), by=Chr]
 sectors <- chr_len$Chr
 
 # --- Gene density (per 100 kb) ---
-gd <- fread("genes_density_100Kb.bed", col.names = c("Chr", "Start", "End", "Value"))
+gd <- fread("genes_density_1MB.bed", col.names = c("Chr", "Start", "End", "Value"))
 gd <- gd[, c(1:4)]
 gd <- std_names(gd, c(Chr="Chr", Start="Start", End="End", Value="Value"))
 stopifnot(all(c("Chr","Start","End","Value") %in% names(gd)))
@@ -69,7 +69,7 @@ gd <- gd[Chr %in% sectors]
 setorder(gd, Chr, Start)
 
 # Repeats bed files
-rep <- fread("LINE_100kb.cov")
+rep <- fread("LINE_1MB.cov")
 rep <- rep[, -c(5,6,7)]
 colnames(rep) = c("Chr", "Start", "End", "Value")
 rep <- std_names(rep, c(Chr="Chr", Start="Start", End="End", Value="Value"))
@@ -191,7 +191,7 @@ circos.genomicTrackPlotRegion(
 )
 
 # Repeats bed files
-rep <- fread("LTR_100kb.cov")
+rep <- fread("LTR_1MB.cov")
 rep <- rep[, -c(5,6,7)]
 colnames(rep) = c("Chr", "Start", "End", "Value")
 rep <- std_names(rep, c(Chr="Chr", Start="Start", End="End", Value="Value"))
@@ -219,7 +219,7 @@ circos.genomicTrackPlotRegion(
   }
 )
 # Repeats bed files
-rep <- fread("repeat_total_100Kb.cov")
+rep <- fread("repeat_total_1MB.cov")
 rep <- rep[, -c(5,6,7)]
 colnames(rep) = c("Chr", "Start", "End", "Value")
 rep <- std_names(rep, c(Chr="Chr", Start="Start", End="End", Value="Value"))
@@ -250,7 +250,7 @@ circos.genomicTrackPlotRegion(
 ## ---------- SYNTENY LINKS FROM BEDPE (Chr1 Start1 End1 Chr2 Start2 End2) ----------
 
 bedpe_file <- "synteny_all.bedpe"  # << set your path
-min_block  <- 1e2                 # keep links ≥10 kb on both sides
+min_block  <- 10e3                 # keep links ≥10 kb on both sides
 max_links  <- 10000                 # downsample if too dense
 alpha_link <- 0.1                  # transparency 0..1
 
@@ -314,64 +314,7 @@ df2 <- data.frame(chr=factor(bp$Chr2, levels=sectors), start=bp$Start2, end=bp$E
 
 circos.genomicLink(df1, df2, col = link_cols, border = NA, lwd = 2)
 
-################################################################
-###############################################################
 
-bedpe_file <- "synteny_all.bedpe"
-
-# 0) (Optional) render to a fast raster device instead of PDF with alpha
-# install.packages("ragg")
-# ragg::agg_png("circos_synteny.png", width = 3000, height = 3000, res = 360)
-
-bp <- fread(bedpe_file)
-setnames(bp, c("Chr1","Start1","End1","Chr2","Start2","End2"))
-bp[, c("Start1","End1","Start2","End2") := lapply(.SD, as.numeric),
-   .SDcols = c("Start1","End1","Start2","End2")]
-bp <- bp[Chr1 %in% sectors & Chr2 %in% sectors &
-           End1 > Start1 & End2 > Start2]
-
-# Clamp to chromosome bounds
-chr2len <- setNames(chr_len$length, chr_len$Chr)
-bp[, Start1 := pmax(0, pmin(Start1, chr2len[Chr1]))]
-bp[, End1   := pmax(0, pmin(End1,   chr2len[Chr1]))]
-bp[, Start2 := pmax(0, pmin(Start2, chr2len[Chr2]))]
-bp[, End2   := pmax(0, pmin(End2,   chr2len[Chr2]))]
-bp <- bp[End1 > Start1 & End2 > Start2]
-
-# 1) Filter tiny blocks HARD (you had 1e2 = 100 bp; use ≥ 5e4 = 50 kb or ≥ 1e4 = 10 kb)
-min_block <- 1e4
-bp <- bp[(End1-Start1) >= min_block & (End2-Start2) >= min_block]
-
-# 2) De-duplicate symmetric pairs (A↔B) so each link is drawn once
-swap <- bp$Chr1 > bp$Chr2 | (bp$Chr1 == bp$Chr2 & bp$Start1 > bp$Start2) |
-  (bp$Chr1 == bp$Chr2 & bp$Start1 == bp$Start2 & bp$End1 > bp$End2)
-bp[swap, c("Chr1","Start1","End1","Chr2","Start2","End2") :=
-     .(Chr2, Start2, End2, Chr1, Start1, End1)]
-bp <- unique(bp, by = c("Chr1","Start1","End1","Chr2","Start2","End2"))
-
-# 3) Keep the strongest signal: longest blocks per Chr1–Chr2 pair
-bp[, len := pmin(End1-Start1, End2-Start2)]
-bp[, pair := paste(Chr1, Chr2, sep="|")]
-
-# cap per pair and overall (tune these)
-k_per_pair <- 200
-bp <- bp[order(-len), .SD[1:min(.N, k_per_pair)], by = pair]
-
-max_links <- 10000
-if (nrow(bp) > max_links) bp <- bp[order(-len)][1:max_links]
-
-# 4) Color per chromosome (Chr1) and draw with thin lines, modest alpha
-alpha_link <- 0.35     # heavy alpha on PDF is slow; modest alpha is fine
-lwd_link   <- 0.4
-
-# reuse the per-chromosome palette defined earlier:
-chr_col <- setNames(qualitative_hcl(length(sectors), "Dark 3"), sectors)
-link_cols <- add_transparency(chr_col[bp$Chr1], alpha_link)
-
-df1 <- data.frame(chr=factor(bp$Chr1, levels=sectors), start=bp$Start1, end=bp$End1)
-df2 <- data.frame(chr=factor(bp$Chr2, levels=sectors), start=bp$Start2, end=bp$End2)
-
-circos.genomicLink(df1, df2, col = link_cols, border = NA, lwd = lwd_link)
 
 
 
