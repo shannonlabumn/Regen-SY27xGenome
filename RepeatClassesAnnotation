@@ -1,6 +1,7 @@
 # RepeatModeler Version 2.0.6
-BuildDatabase -name all.haps.rename.shortid all.haps.rename.shortid.fasta
-RepeatModeler -database all.haps.rename.shortid -threads 64 -genomeSampleSizeMax 100000000 -LTRStruct -numAddlRounds 2
+BuildDatabase -name RegenSY_all_haps RegenSY_all_haps.fasta
+RepeatModeler -database RegenSY_all_haps -threads 64 -genomeSampleSizeMax 100000000 -LTRStruct -numAddlRounds 2
 
 # Extensive de-novo TE Annotator (EDTA) v2.2.2
-perl EDTA.pl --genome all.haps.rename.shortid.fasta --species others --step all --cds medsa.RegenSY27x.gnm1.ann1.gene_models_main.shortid.cds.fasta  --sensitive 1 --anno 1  --evaluate 1  --threads 80 --rmlib all.haps.rename.shortid.fasta.RM2.fa --exclude medsa.RegenSY27x.gnm1.ann1.gene_models_main.shortid.bed --force 1 --curatedlib TE_lib/TE_lib_legumes.fa
+# The curated TE library was generated using annotated repeats of nine different legume species including Arachis hypogeae, Vicia faba, M. truncatula, Lotus japonicus, Cajanus cajan, Glycine max, Phaseolus vulgaris, Vigna radiata, and Cicer arietinum obtained from Plantrep database (Luo et al. 2022). 
+perl EDTA.pl --genome RegenSY_all_haps.fasta --species others --step all --cds RegenSY_all_haps.cds.fasta  --sensitive 1 --anno 1  --evaluate 1  --threads 80 --rmlib RegenSY_all_haps.fasta.RM2.fa --exclude RegenSY_all_haps.bed --force 1 --curatedlib TE_lib/TE_lib_legumes.fa
