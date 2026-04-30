@@ -7,5 +7,6 @@ orthofinder  -f Ortho/primary_transcripts/
 
 # The orthologous gene families and phylogenetic tree topology inferred from OrthoFinder v3.1.0 (Emms and Kelly 2019) were input to CAFE5 v5.1.0 (Mendes et al. 2021)
 # to identify significant expansion or contraction in each gene family (P < 0.01). 
+# in Orthogroups.GeneCount.filtered.tsv Total coumn is removed
 
 cafe5 -i Orthogroups.GeneCount.filtered.tsv -t Species_Tree/SpeciesTree_ultrametric.nwk -c 32 -k 0.01
