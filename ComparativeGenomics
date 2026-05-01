@@ -23,6 +23,7 @@ minimap2 -ax asm5 --eqx  RegenSY_nocontig.fasta Zm4nocontigsRH.fasta > RSY_Zm4.s
 minimap2 -ax asm5 --eqx  RSYhap1noscf.fasta Zm-1_nofasta.fasta > RSY_Zm1_homo1.sam
 
 # Syri for SV identications (one example is shown)
+# syri v1.7.1 
 syri --nc 8 --all -c RSY_XJDY.sam -F S  -r RegenSY_nocontig.fasta  -q XJDY_nocontigRev.fasta  -f
 
 # For alignment and SV identification among four haplotypes of RegenSY genome assembly, remove all contigs and use only pseudochromosome level haplotypes
@@ -38,7 +39,7 @@ RSYhap2.fasta         lw:1.5;lc:blue
 RSYhap3.fasta         lw:1.5;lc:orange
 RSYhap4.fasta         lw:1.5;lc:green
 
-# run plotsr
+# run plotsr v1.1.5 
 plotsr \
     --sr RSYhap1-hap2.syri.out \
     --sr RSYhap2-hap3.syri.out \
