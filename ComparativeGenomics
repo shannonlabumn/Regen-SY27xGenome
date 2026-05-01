@@ -12,3 +12,41 @@ orthofinder  -f Ortho/primary_transcripts/
 cafe5 -i Orthogroups.GeneCount.filtered.tsv -t Species_Tree/SpeciesTree_ultrametric.nwk -c 32 -k 0.01
 
 python cafe5_tree_from_report_boxes.py --report Base_report.cafe   --count Base_count.tab   --clade Base_clade_results.txt   --change Base_change.tab   -o cafe5_expansion_contraction.png --fontsize 13   --paren_mode families  --label_xshift_frac 0.09 --fig_height 18 --y_scale 2.5 --x_scale 1 --branch_lw 2.5
+
+# For alignment and structural variation idenfication among Regen-SY27x genome and other alfalfa genomes available publicaly
+# Made sure the headers match in all fasta files and contigs are removed
+#  minimap2/2.26 for comparing different alfalfa genomes (example is hown for two genomes)
+minimap2 -ax asm5 --eqx  RegenSY_nocontig.fasta XJDY_nocontigRev.fasta > RSY_XJDY.sam
+minimap2 -ax asm5 --eqx  RegenSY_nocontig.fasta Zm4nocontigsRH.fasta > RSY_Zm4.sam
+
+# only haplotype 1 was used for comparison with ZhongmuNo.1 assembly
+minimap2 -ax asm5 --eqx  RSYhap1noscf.fasta Zm-1_nofasta.fasta > RSY_Zm1_homo1.sam
+
+# Syri for SV identications (one example is shown)
+syri --nc 8 --all -c RSY_XJDY.sam -F S  -r RegenSY_nocontig.fasta  -q XJDY_nocontigRev.fasta  -f
+
+# For alignment and SV identification among four haplotypes of RegenSY genome assembly, remove all contigs and use only pseudochromosome level haplotypes
+# mummer v4.0.0beta2 for alignment
+nucmer --maxmatch -c 100 -b 500 -l 50 -p RSYhap1-hap2 -t 90 RSYhap1.fasta RSYhap2.fasta
+syri --nc 8 --all -c RSYhap1-hap2.filtered.coords -d RSYhap1-hap2.filtered.delta -r RSYhap1.fasta -q RSYhap2.fasta
+
+# Similarly for RSYhap2-hap3 and RSYhap3-hap4
+
+# plotting generate a genomes.txt file
+RSYhap1.fasta         lw:1.5;lc:red
+RSYhap2.fasta         lw:1.5;lc:blue
+RSYhap3.fasta         lw:1.5;lc:orange
+RSYhap4.fasta         lw:1.5;lc:green
+
+# run plotsr
+plotsr \
+    --sr RSYhap1-hap2.syri.out \
+    --sr RSYhap2-hap3.syri.out \
+    --sr RSYhap3-hap4.syri.out \
+    --genomes genomes.txt \
+    -o RSY_plot.png
+# Similarly all plots were made for different genome comparisons
+
+
+
+
